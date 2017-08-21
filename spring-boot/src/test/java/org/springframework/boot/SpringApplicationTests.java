@@ -417,6 +417,9 @@ public class SpringApplicationTests {
         assertThat(environment).has(matchingPropertySource(CommandLinePropertySource.class, "commandLineArgs"));
     }
 
+	/**
+	 * 后续的 commandLineArgs 属性源会覆盖前面的
+     */
     @Test
     public void commandLinePropertySourceEnhancesEnvironment() throws Exception {
         SpringApplication application = new SpringApplication(ExampleConfig.class);
@@ -432,6 +435,10 @@ public class SpringApplicationTests {
         assertThat(environment.getProperty("foo")).isEqualTo("bar");
     }
 
+	/**
+	 * 阅读加载配置文件的过程
+	 * org.springframework.boot.context.config.ConfigFileApplicationListener#postProcessEnvironment(org.springframework.core.env.ConfigurableEnvironment, org.springframework.boot.SpringApplication)
+     */
     @Test
     public void propertiesFileEnhancesEnvironment() throws Exception {
         SpringApplication application = new SpringApplication(ExampleConfig.class);
@@ -883,6 +890,9 @@ public class SpringApplicationTests {
             public boolean matches(ConfigurableEnvironment value) {
                 for (PropertySource<?> source : value.getPropertySources()) {
                     if (propertySourceClass.isInstance(source) && (name == null || name.equals(source.getName()))) {
+						// >> vonzhou
+						System.out.println(source.getProperty("foo")); //SimpleCommandLinePropertySource
+						// << vonzhou
                         return true;
                     }
                 }

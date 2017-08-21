@@ -636,6 +636,9 @@ public class ConfigFileApplicationListener
 			return locations;
 		}
 
+		/**
+		 * 获取配置文件的名称,默认是 application
+         */
 		private Set<String> getSearchNames() {
 			if (this.environment.containsProperty(CONFIG_NAME_PROPERTY)) {
 				return asResolvedSet(this.environment.getProperty(CONFIG_NAME_PROPERTY),

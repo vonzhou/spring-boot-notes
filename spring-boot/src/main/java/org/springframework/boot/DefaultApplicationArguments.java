@@ -26,6 +26,8 @@ import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.util.Assert;
 
 /**
+ * 最终是 SimpleCommandLinePropertySource 对命令行参数进行解析, 属性源的名称是 commandLineArgs
+ *
  * Default implementation of {@link ApplicationArguments}.
  *
  * @author Phillip Webb

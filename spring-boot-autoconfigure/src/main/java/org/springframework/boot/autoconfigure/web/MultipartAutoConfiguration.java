@@ -58,6 +58,10 @@ public class MultipartAutoConfiguration {
 		this.multipartProperties = multipartProperties;
 	}
 
+	/**
+	 * 所以我们的可以定义自己的 MultipartConfigElement bean 来配置
+	 * @return
+     */
 	@Bean
 	@ConditionalOnMissingBean
 	public MultipartConfigElement multipartConfigElement() {
