@@ -548,6 +548,9 @@ public class SpringApplicationTests {
         assertThat(initialSources.toArray()).isEqualTo(sources);
     }
 
+	/**
+	 * source 加载过程 org.springframework.boot.BeanDefinitionLoader#load(java.lang.CharSequence)
+	 */
     @Test
     public void wildcardSources() {
         Object[] sources = {"classpath:org/springframework/boot/sample-${sample.app.test.prop}.xml"};
@@ -577,6 +580,9 @@ public class SpringApplicationTests {
         assertThat(SpringApplication.exit(this.context)).isEqualTo(0);
     }
 
+	/**
+	 * 应用退出码会根据所有的 ExitCodeGenerator 而来
+     */
     @Test
     public void exitWithExplicitCode() throws Exception {
         SpringApplication application = new SpringApplication(ExampleConfig.class);
@@ -596,6 +602,9 @@ public class SpringApplicationTests {
         assertThat(listener.getExitCode()).isEqualTo(2);
     }
 
+	/**
+	 * 异常时设置 exitCode 及 exitCode 的传递
+     */
     @Test
     public void exitWithExplicitCodeFromException() throws Exception {
         final SpringBootExceptionHandler handler = mock(SpringBootExceptionHandler.class);
