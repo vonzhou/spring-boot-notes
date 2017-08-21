@@ -417,8 +417,8 @@ public class SpringApplicationTests {
         assertThat(environment).has(matchingPropertySource(CommandLinePropertySource.class, "commandLineArgs"));
     }
 
-	/**
-	 * 后续的 commandLineArgs 属性源会覆盖前面的
+    /**
+     * 后续的 commandLineArgs 属性源会覆盖前面的
      */
     @Test
     public void commandLinePropertySourceEnhancesEnvironment() throws Exception {
@@ -435,9 +435,9 @@ public class SpringApplicationTests {
         assertThat(environment.getProperty("foo")).isEqualTo("bar");
     }
 
-	/**
-	 * 阅读加载配置文件的过程
-	 * org.springframework.boot.context.config.ConfigFileApplicationListener#postProcessEnvironment(org.springframework.core.env.ConfigurableEnvironment, org.springframework.boot.SpringApplication)
+    /**
+     * 阅读加载配置文件的过程
+     * org.springframework.boot.context.config.ConfigFileApplicationListener#postProcessEnvironment(org.springframework.core.env.ConfigurableEnvironment, org.springframework.boot.SpringApplication)
      */
     @Test
     public void propertiesFileEnhancesEnvironment() throws Exception {
@@ -460,6 +460,11 @@ public class SpringApplicationTests {
         assertThat(environment.acceptsProfiles("foo")).isTrue();
     }
 
+    /**
+     * 在 prepareEnvironment 的时候会解析 spring.profiles.active 属性
+     * org.springframework.core.env.AbstractEnvironment#doGetActiveProfiles()
+     * active profile 存储结构是 LinkedHashSet
+     */
     @Test
     public void addProfilesOrder() throws Exception {
         SpringApplication application = new SpringApplication(ExampleConfig.class);
@@ -472,11 +477,15 @@ public class SpringApplicationTests {
         assertThat(environment.getActiveProfiles()).containsExactly("foo", "bar", "spam");
     }
 
+    /**
+     * 注意有效的profile的顺序，后面的属性值最终会win
+     */
     @Test
     public void addProfilesOrderWithProperties() throws Exception {
         SpringApplication application = new SpringApplication(ExampleConfig.class);
         application.setWebEnvironment(false);
         application.setAdditionalProfiles("other");
+//		application.setAdditionalProfiles("dev");
         ConfigurableEnvironment environment = new StandardEnvironment();
         application.setEnvironment(environment);
         this.context = application.run();
@@ -484,6 +493,10 @@ public class SpringApplicationTests {
         assertThat(environment.getProperty("my.property")).isEqualTo("fromotherpropertiesfile");
     }
 
+	/**
+	 * run 参数为空的话，PropertySource 不包含 SimpleCommandLinePropertySource,
+	 * 此时的 PropertySource 有 MapPropertySource 和 SystemEnvironmentPropertySource
+     */
     @Test
     public void emptyCommandLinePropertySourceNotAdded() throws Exception {
         SpringApplication application = new SpringApplication(ExampleConfig.class);
@@ -494,17 +507,26 @@ public class SpringApplicationTests {
         assertThat(environment.getProperty("foo")).isEqualTo("bucket");
     }
 
+	/**
+	 * 同上
+     */
     @Test
     public void disableCommandLinePropertySource() throws Exception {
         SpringApplication application = new SpringApplication(ExampleConfig.class);
         application.setWebEnvironment(false);
-        application.setAddCommandLineProperties(false);
+        application.setAddCommandLineProperties(false);  // 这里
         ConfigurableEnvironment environment = new StandardEnvironment();
         application.setEnvironment(environment);
         this.context = application.run("--foo=bar");
         assertThat(environment).doesNotHave(matchingPropertySource(PropertySource.class, "commandLineArgs"));
     }
 
+	/**
+	 * 实现 Ordered 接口来控制bean的加载顺序
+	 * 在 refresh 之后，会 callRunners ， org.springframework.boot.SpringApplication#callRunners
+	 * 其中会调用 CommandLineRunner 和 ApplicationRunner 的 run 方法， 这俩区别是？
+	 *
+     */
     @Test
     public void runCommandLineRunnersAndApplicationRunners() throws Exception {
         SpringApplication application = new SpringApplication(CommandLineRunConfig.class);
@@ -890,9 +912,9 @@ public class SpringApplicationTests {
             public boolean matches(ConfigurableEnvironment value) {
                 for (PropertySource<?> source : value.getPropertySources()) {
                     if (propertySourceClass.isInstance(source) && (name == null || name.equals(source.getName()))) {
-						// >> vonzhou
-						System.out.println(source.getProperty("foo")); //SimpleCommandLinePropertySource
-						// << vonzhou
+                        // >> vonzhou
+                        System.out.println(source.getProperty("foo")); // SimpleCommandLinePropertySource
+                        // << vonzhou
                         return true;
                     }
                 }
