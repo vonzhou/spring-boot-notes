@@ -47,6 +47,7 @@ import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.event.ApplicationStartingEvent;
+import org.springframework.boot.system.ApplicationPidFileWriter;
 import org.springframework.boot.testutil.InternalOutputCapture;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -921,6 +922,17 @@ public class SpringApplicationTests {
                                                          "Caused by: java.lang.RuntimeException: ExpectedError");
         assertThat(occurrences).as("Expected single stacktrace").isEqualTo(1);
     }
+
+	/**
+	 * 使用 ApplicationPidFileWriter 后默认会在当前目录生成一个 application.pid 文件
+	 */
+	@Test
+	public void runAppWithPidFile(){
+		SpringApplication springApplication = new SpringApplication(ExampleConfig.class);
+		springApplication.addListeners(new ApplicationPidFileWriter());
+		springApplication.setWebEnvironment(false);
+		springApplication.run();
+	}
 
     private Condition<ConfigurableEnvironment> matchingPropertySource(final Class<?> propertySourceClass, final String name) {
         return new Condition<ConfigurableEnvironment>("has property source") {
