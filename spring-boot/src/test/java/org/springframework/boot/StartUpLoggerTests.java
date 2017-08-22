@@ -22,6 +22,7 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
+ * 根应用上下文会打印启动信息
  * Tests for {@link StartupInfoLogger}.
  *
  * @author Dave Syer
