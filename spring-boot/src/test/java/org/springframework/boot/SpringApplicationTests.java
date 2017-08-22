@@ -493,9 +493,9 @@ public class SpringApplicationTests {
         assertThat(environment.getProperty("my.property")).isEqualTo("fromotherpropertiesfile");
     }
 
-	/**
-	 * run 参数为空的话，PropertySource 不包含 SimpleCommandLinePropertySource,
-	 * 此时的 PropertySource 有 MapPropertySource 和 SystemEnvironmentPropertySource
+    /**
+     * run 参数为空的话，PropertySource 不包含 SimpleCommandLinePropertySource,
+     * 此时的 PropertySource 有 MapPropertySource 和 SystemEnvironmentPropertySource
      */
     @Test
     public void emptyCommandLinePropertySourceNotAdded() throws Exception {
@@ -507,25 +507,25 @@ public class SpringApplicationTests {
         assertThat(environment.getProperty("foo")).isEqualTo("bucket");
     }
 
-	/**
-	 * 同上
+    /**
+     * 同上
      */
     @Test
     public void disableCommandLinePropertySource() throws Exception {
         SpringApplication application = new SpringApplication(ExampleConfig.class);
         application.setWebEnvironment(false);
-        application.setAddCommandLineProperties(false);  // 这里
+        application.setAddCommandLineProperties(false); // 这里
         ConfigurableEnvironment environment = new StandardEnvironment();
         application.setEnvironment(environment);
         this.context = application.run("--foo=bar");
         assertThat(environment).doesNotHave(matchingPropertySource(PropertySource.class, "commandLineArgs"));
     }
 
-	/**
-	 * 实现 Ordered 接口来控制bean的加载顺序
-	 * 在 refresh 之后，会 callRunners ， org.springframework.boot.SpringApplication#callRunners
-	 * 其中会调用 CommandLineRunner 和 ApplicationRunner 的 run 方法， 这俩区别是？
-	 *
+    /**
+     * 实现 Ordered 接口来控制bean的加载顺序
+     * 在 refresh 之后，会 callRunners ， org.springframework.boot.SpringApplication#callRunners
+     * 其中会调用 CommandLineRunner 和 ApplicationRunner 的 run 方法， 这俩区别是？
+     *
      */
     @Test
     public void runCommandLineRunnersAndApplicationRunners() throws Exception {
@@ -548,9 +548,9 @@ public class SpringApplicationTests {
         assertThat(initialSources.toArray()).isEqualTo(sources);
     }
 
-	/**
-	 * source 加载过程 org.springframework.boot.BeanDefinitionLoader#load(java.lang.CharSequence)
-	 */
+    /**
+     * source 加载过程 org.springframework.boot.BeanDefinitionLoader#load(java.lang.CharSequence)
+     */
     @Test
     public void wildcardSources() {
         Object[] sources = {"classpath:org/springframework/boot/sample-${sample.app.test.prop}.xml"};
@@ -580,8 +580,8 @@ public class SpringApplicationTests {
         assertThat(SpringApplication.exit(this.context)).isEqualTo(0);
     }
 
-	/**
-	 * 应用退出码会根据所有的 ExitCodeGenerator 而来
+    /**
+     * 应用退出码会根据所有的 ExitCodeGenerator 而来
      */
     @Test
     public void exitWithExplicitCode() throws Exception {
@@ -602,8 +602,9 @@ public class SpringApplicationTests {
         assertThat(listener.getExitCode()).isEqualTo(2);
     }
 
-	/**
-	 * 异常时设置 exitCode 及 exitCode 的传递
+    /**
+     * 异常时设置 exitCode 及 exitCode 的传递
+     * 异常实现 ExitCodeGenerator 
      */
     @Test
     public void exitWithExplicitCodeFromException() throws Exception {
@@ -628,6 +629,9 @@ public class SpringApplicationTests {
         assertThat(listener.getExitCode()).isEqualTo(11);
     }
 
+    /**
+     * ExitCodeExceptionMapper 实现 Exception 和 exitCode 映射
+     */
     @Test
     public void exitWithExplicitCodeFromMappedException() throws Exception {
         final SpringBootExceptionHandler handler = mock(SpringBootExceptionHandler.class);
@@ -683,6 +687,7 @@ public class SpringApplicationTests {
         assertThat(this.context).isInstanceOf(AnnotationConfigApplicationContext.class);
         assertThat(getEnvironment().getProperty("bar")).isEqualTo("foo");
         assertThat(getEnvironment().getProperty("baz")).isEqualTo("");
+        assertThat(getEnvironment().getProperty("crap")).isEqualTo(null);
     }
 
     @Test
@@ -840,6 +845,9 @@ public class SpringApplicationTests {
         verify(applicationContext.getApplicationContext(), never()).registerShutdownHook();
     }
 
+    /**
+     * headless 默认是 true
+     */
     @Test
     public void headless() throws Exception {
         TestSpringApplication application = new TestSpringApplication(ExampleConfig.class);
